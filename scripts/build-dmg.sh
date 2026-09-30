@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================
-#  BatteryGuard — 构建 DMG 安装包 (v1.1.0)
+#  BatteryGuard — 构建 DMG 安装包 (v1.1.1)
 # ============================================
 
 set -e
@@ -8,7 +8,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 APP_NAME="BatteryGuard"
-VERSION="1.1.0"
+VERSION="1.1.1"
 DMG_NAME="${APP_NAME}-${VERSION}"
 BUILD_DIR="$PROJECT_DIR/.build-dmg"
 APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
@@ -117,7 +117,7 @@ fi
 
 # 5. Bilingual Readme instructions
 cat > "$DMG_TEMP/Instructions & 说明.txt" << 'README'
-BatteryGuard (v1.1.0)
+BatteryGuard (v1.1.1)
 =====================
 
 【English】

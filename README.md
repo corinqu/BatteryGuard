@@ -42,7 +42,7 @@
 
 #### Method 1: Download DMG (Recommended)
 
-1. Download the latest **`BatteryGuard-1.1.0.dmg`** from [Releases](../../releases).
+1. Download the latest **`BatteryGuard-1.1.1.dmg`** from [Releases](../../releases).
 2. Open the DMG file and drag **BatteryGuard** into your **Applications** folder.
 3. Open BatteryGuard from Launchpad or Applications. On first launch, enter your Mac administrator password once to authorize the background helper service.
 4. The battery icon will appear on your menu bar. Ready to use!
@@ -101,7 +101,7 @@ BatteryGuard ensures a clean and complete uninstallation that leaves **zero trac
 
 #### 方式一：下载 DMG 安装包（推荐，开箱即用）
 
-1. 从 [Releases](../../releases) 下载最新的 `BatteryGuard-1.1.0.dmg`。
+1. 从 [Releases](../../releases) 下载最新的 `BatteryGuard-1.1.1.dmg`。
 2. 双击打开 DMG，将 **BatteryGuard** 拖入 **Applications**（应用程序）文件夹。
 3. 从启动台打开 BatteryGuard，首次使用会弹出系统原生密码框，输入一次 Mac 登录密码授权后台服务即可。
 4. 菜单栏右上角将出现电池图标，点击即可进行管理。无需任何终端或环境安装！

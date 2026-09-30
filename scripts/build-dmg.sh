@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================
-#  BatteryGuard — 构建 DMG 安装包
+#  BatteryGuard — 构建 DMG 安装包 (v1.1.0)
 # ============================================
 
 set -e
@@ -8,13 +8,13 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 APP_NAME="BatteryGuard"
-VERSION="1.0.0"
+VERSION="1.1.0"
 DMG_NAME="${APP_NAME}-${VERSION}"
 BUILD_DIR="$PROJECT_DIR/.build-dmg"
 APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
 
-echo "🔨 BatteryGuard DMG Builder"
-echo "=========================="
+echo "🔨 BatteryGuard DMG Builder (v${VERSION})"
+echo "=========================================="
 echo ""
 
 # ─── Clean ───
@@ -32,9 +32,23 @@ echo "   ✅ 编译完成 ($(du -h "$BINARY" | cut -f1 | xargs))"
 echo "📁 创建 App Bundle..."
 mkdir -p "$APP_BUNDLE/Contents/MacOS"
 mkdir -p "$APP_BUNDLE/Contents/Resources"
+mkdir -p "$APP_BUNDLE/Contents/Helpers"
 
 cp "$BINARY" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 
+# Copy bundled helper binary (Zero Homebrew dependency)
+BATT_SRC="$PROJECT_DIR/Assets/bin/batt"
+if [ -f "$BATT_SRC" ]; then
+    echo "   📦 嵌入内置充电守护核心组件..."
+    cp "$BATT_SRC" "$APP_BUNDLE/Contents/Resources/batt"
+    cp "$BATT_SRC" "$APP_BUNDLE/Contents/Helpers/batt"
+    chmod 755 "$APP_BUNDLE/Contents/Resources/batt"
+    chmod 755 "$APP_BUNDLE/Contents/Helpers/batt"
+else
+    echo "   ⚠️ 未找到 Assets/bin/batt，跳过内置"
+fi
+
+# Copy icon
 ICON_FILE="$PROJECT_DIR/Assets/AppIcon.icns"
 if [ -f "$ICON_FILE" ]; then
     cp "$ICON_FILE" "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
@@ -94,13 +108,16 @@ chmod +x "$DMG_TEMP/卸载 BatteryGuard.command"
 
 # 4. Readme instructions
 cat > "$DMG_TEMP/使用说明.txt" << 'README'
-BatteryGuard 安装与卸载说明
-========================
+BatteryGuard 安装与卸载说明 (v1.1.0)
+==================================
+
+【特性：开箱即用，零依赖】
+本版本已内置底层充电控制核心，无需预先安装 Homebrew 或任何第三方依赖！
 
 【安装方法】
-1. 将 BatteryGuard 拖拽到右侧 Applications 文件夹。
-2. 从启动台或访达的「应用程序」中启动 BatteryGuard。
-3. 首次启动根据提示授权即可，菜单栏右上角将出现电池图标。
+1. 将左侧 BatteryGuard 拖拽到右侧 Applications 文件夹。
+2. 从启动台或「应用程序」中启动 BatteryGuard。
+3. 首次启动根据提示输入一次 Mac 密码授权后台服务即可，菜单栏右上角将出现电池图标。
 
 【卸载方法（两种方式任选）】
 • 方式一（推荐）：直接点击菜单栏电池图标，选择「🗑️ 卸载 BatteryGuard...」，按提示操作即可自动恢复全部默认设置并彻底卸载。

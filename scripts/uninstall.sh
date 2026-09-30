@@ -71,17 +71,21 @@ rm -rf "/Applications/$APP_NAME.app" "$HOME/Applications/$APP_NAME.app" 2>/dev/n
 rm -rf "$CONFIG_DIR" 2>/dev/null || true
 echo "  ✅ 应用与配置已清除"
 
-# 7. 根据选择处理 batt
-echo "  [5/5] 处理 batt 核心组件..."
+# 7. 根据选择处理后台守护组件
+echo "  [5/5] 处理后台守护组件..."
 if [[ "$keep_batt" =~ ^[Nn]$ ]]; then
-    echo "  正在停止并彻底移除 batt（可能需要输入管理员密码）..."
+    echo "  正在停止并彻底移除后台守护组件（可能需要输入管理员密码）..."
+    sudo launchctl unload -w /Library/LaunchDaemons/com.batteryguard.daemon.plist 2>/dev/null || true
+    sudo launchctl bootout system/com.batteryguard.daemon 2>/dev/null || true
+    sudo rm -f /Library/LaunchDaemons/com.batteryguard.daemon.plist 2>/dev/null || true
+    sudo rm -f /Library/PrivilegedHelperTools/com.batteryguard.helper 2>/dev/null || true
     sudo brew services stop batt 2>/dev/null || true
     sudo launchctl bootout system/sh.brew.batt 2>/dev/null || true
     sudo rm -f /Library/LaunchDaemons/sh.brew.batt.plist 2>/dev/null || true
     brew uninstall batt 2>/dev/null || true
-    echo "  ✅ batt 服务及软件包已完全移除"
+    echo "  ✅ 后台守护服务已完全注销并移除"
 else
-    echo "  ✅ 已保留 batt 组件"
+    echo "  ✅ 已保留后台组件"
 fi
 
 echo ""

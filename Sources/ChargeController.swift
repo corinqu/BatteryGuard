@@ -1,13 +1,47 @@
 import Foundation
 
-/// Controls charging via the `batt` CLI tool.
+/// Controls charging via the bundled / privileged `batt` helper tool.
 final class ChargeController {
     
-    let battBinaryPath: String
+    /// Path to executable batt binary (prioritizes installed system helper, then app bundle).
+    var battBinaryPath: String {
+        let helperPath = "/Library/PrivilegedHelperTools/com.batteryguard.helper"
+        if FileManager.default.isExecutableFile(atPath: helperPath) {
+            return helperPath
+        }
+        
+        if let bundlePath = Bundle.main.path(forResource: "batt", ofType: nil),
+           FileManager.default.isExecutableFile(atPath: bundlePath) {
+            return bundlePath
+        }
+        
+        let helperInBundle = Bundle.main.bundleURL.appendingPathComponent("Contents/Helpers/batt").path
+        if FileManager.default.isExecutableFile(atPath: helperInBundle) {
+            return helperInBundle
+        }
+        
+        let fallbacks = ["/opt/homebrew/bin/batt", "/usr/local/bin/batt"]
+        return fallbacks.first { FileManager.default.isExecutableFile(atPath: $0) } ?? helperPath
+    }
     
-    init() {
-        let candidates = ["/opt/homebrew/bin/batt", "/usr/local/bin/batt"]
-        battBinaryPath = candidates.first { FileManager.default.fileExists(atPath: $0) } ?? "/opt/homebrew/bin/batt"
+    /// Path to the bundled binary inside the application package.
+    var bundledBattPath: String? {
+        if let bundlePath = Bundle.main.path(forResource: "batt", ofType: nil),
+           FileManager.default.fileExists(atPath: bundlePath) {
+            return bundlePath
+        }
+        
+        let helperInBundle = Bundle.main.bundleURL.appendingPathComponent("Contents/Helpers/batt").path
+        if FileManager.default.fileExists(atPath: helperInBundle) {
+            return helperInBundle
+        }
+        
+        let devPath = "/Users/corin/Desktop/BatteryGuard/Assets/bin/batt"
+        if FileManager.default.fileExists(atPath: devPath) {
+            return devPath
+        }
+        
+        return nil
     }
     
     /// Set charge limit percentage (10-100). 100 turns off charge limit.

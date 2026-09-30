@@ -50,109 +50,93 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: - First Run Setup
     
+    // MARK: - First Run Setup (Zero Homebrew Dependency, 100% Self-Contained)
+    
     private func performFirstRunSetup() -> Bool {
-        let brewPath = "/opt/homebrew/bin/brew"
-        if !FileManager.default.fileExists(atPath: brewPath) {
-            let alert = NSAlert()
-            alert.messageText = "需要安装 Homebrew"
-            alert.informativeText = """
-            BatteryGuard 需要 Homebrew 来安装充电控制底层工具。
-            
-            Homebrew 是 macOS 上最受信任的软件包管理器。
-            点击「安装」将自动打开终端完成安装，安装完成后重新打开 BatteryGuard 即可。
-            """
-            alert.alertStyle = .informational
-            alert.addButton(withTitle: "安装 Homebrew")
-            alert.addButton(withTitle: "退出")
-            
-            if alert.runModal() == .alertFirstButtonReturn {
-                runInTerminal("/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"")
-            }
+        // 1. If daemon is already running and accessible, proceed immediately
+        if chargeController.isDaemonRunning() {
+            return true
+        }
+        
+        // 2. Prompt user to authorize the privileged helper (one-time setup)
+        let alert = NSAlert()
+        alert.messageText = "启用电池健康守护服务"
+        alert.informativeText = """
+        BatteryGuard 需要安装后台核心守护服务，以实现芯片级精准控制充电阈值。
+        
+        点击「授权并启用」后，系统将弹出密码窗口，请输入你的 Mac 登录密码完成一次性授权。
+        
+        此操作完全基于 Apple 官方电源管理规范，不影响硬件保修与系统安全。
+        """
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "授权并启用")
+        alert.addButton(withTitle: "退出")
+        
+        guard alert.runModal() == .alertFirstButtonReturn else {
             return false
         }
         
-        if !FileManager.default.fileExists(atPath: chargeController.battBinaryPath) {
-            let alert = NSAlert()
-            alert.messageText = "需要安装充电控制组件"
-            alert.informativeText = """
-            BatteryGuard 需要安装开源工具 batt 来管理 SMC 充电阈值。
-            
-            点击「一键安装」将自动完成安装（约需 30 秒）。
-            """
-            alert.alertStyle = .informational
-            alert.addButton(withTitle: "一键安装")
-            alert.addButton(withTitle: "退出")
-            
-            if alert.runModal() == .alertFirstButtonReturn {
-                let success = runShellAndWait("/opt/homebrew/bin/brew", args: ["install", "batt"])
-                if !success {
-                    showError("安装失败", message: "请打开终端手动运行：brew install batt\n安装完成后重新启动 BatteryGuard。")
-                    return false
-                }
-            } else {
-                return false
-            }
+        guard let helperSource = chargeController.bundledBattPath else {
+            showError("安装失败", message: "未找到内置的 helper 核心组件，请重新下载安装 BatteryGuard。")
+            return false
         }
         
-        if !chargeController.isDaemonRunning() {
-            let alert = NSAlert()
-            alert.messageText = "启动充电控制服务"
-            alert.informativeText = """
-            BatteryGuard 需要启动后台充电管理服务。
-            
-            系统将弹出权限窗口，请输入你的 Mac 登录密码进行授权。
-            此授权仅在首次使用时需要一次。
-            """
-            alert.alertStyle = .informational
-            alert.addButton(withTitle: "启动服务")
-            alert.addButton(withTitle: "稍后再说")
-            
-            if alert.runModal() == .alertFirstButtonReturn {
-                let started = startDaemonWithAuth()
-                if !started {
-                    showError("启动未完成", message: "未能启动后台服务，请打开终端执行：\nsudo brew services start batt")
-                }
+        let success = installPrivilegedHelper(from: helperSource)
+        if !success {
+            showError("服务启用失败", message: "未能成功注册后台守护服务。请确保在弹出窗口中正确输入了 Mac 登录密码。")
+            return false
+        }
+        
+        // Wait briefly for daemon socket initialization
+        for _ in 0..<10 {
+            if chargeController.isDaemonRunning() {
+                break
             }
+            Thread.sleep(forTimeInterval: 0.3)
         }
         
         return true
     }
     
-    private func startDaemonWithAuth() -> Bool {
-        let script = "do shell script \"/opt/homebrew/bin/brew services start batt\" with administrator privileges"
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
-        process.arguments = ["-e", script]
-        process.standardOutput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
-        do {
-            try process.run()
-            process.waitUntilExit()
-            return process.terminationStatus == 0
-        } catch {
-            return false
-        }
-    }
-    
-    private func runInTerminal(_ command: String) {
+    private func installPrivilegedHelper(from sourcePath: String) -> Bool {
+        let escapedSource = sourcePath.replacingOccurrences(of: "\"", with: "\\\"")
         let script = """
-        tell application "Terminal"
-            activate
-            do script "\(command)"
-        end tell
+        do shell script "
+        /bin/mkdir -p /Library/PrivilegedHelperTools
+        /bin/cp '\(escapedSource)' /Library/PrivilegedHelperTools/com.batteryguard.helper
+        /bin/chmod 755 /Library/PrivilegedHelperTools/com.batteryguard.helper
+        /usr/sbin/chown root:wheel /Library/PrivilegedHelperTools/com.batteryguard.helper
+
+        /bin/cat << 'PLIST' > /Library/LaunchDaemons/com.batteryguard.daemon.plist
+        <?xml version=\\"1.0\\" encoding=\\"UTF-8\\"?>
+        <!DOCTYPE plist PUBLIC \\"-//Apple//DTD PLIST 1.0//EN\\" \\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\\">
+        <plist version=\\"1.0\\">
+        <dict>
+            <key>KeepAlive</key>
+            <true/>
+            <key>Label</key>
+            <string>com.batteryguard.daemon</string>
+            <key>ProcessType</key>
+            <string>Interactive</string>
+            <key>ProgramArguments</key>
+            <array>
+                <string>/Library/PrivilegedHelperTools/com.batteryguard.helper</string>
+                <string>daemon</string>
+                <string>--always-allow-non-root-access</string>
+            </array>
+            <key>RunAtLoad</key>
+            <true/>
+        </dict>
+        </plist>
+        PLIST
+
+        /bin/launchctl load -w /Library/LaunchDaemons/com.batteryguard.daemon.plist 2>/dev/null || /bin/launchctl bootstrap system /Library/LaunchDaemons/com.batteryguard.daemon.plist 2>/dev/null
+        " with administrator privileges
         """
+        
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
         process.arguments = ["-e", script]
-        process.standardOutput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
-        try? process.run()
-    }
-    
-    private func runShellAndWait(_ path: String, args: [String]) -> Bool {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: path)
-        process.arguments = args
         process.standardOutput = FileHandle.nullDevice
         process.standardError = FileHandle.nullDevice
         do {

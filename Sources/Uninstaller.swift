@@ -74,10 +74,18 @@ final class Uninstaller {
         // 3. Clear Configuration
         Settings.shared.removeConfiguration()
         
-        // 4. Optionally remove batt service and package
+        // 4. Optionally remove privileged helper service
         if removeBatt {
             let script = """
-            do shell script "/opt/homebrew/bin/brew services stop batt 2>/dev/null; /bin/launchctl bootout system/sh.brew.batt 2>/dev/null; /bin/rm -f /Library/LaunchDaemons/sh.brew.batt.plist 2>/dev/null; /opt/homebrew/bin/brew uninstall batt 2>/dev/null" with administrator privileges
+            do shell script "
+            /bin/launchctl unload -w /Library/LaunchDaemons/com.batteryguard.daemon.plist 2>/dev/null
+            /bin/launchctl bootout system/com.batteryguard.daemon 2>/dev/null
+            /bin/rm -f /Library/LaunchDaemons/com.batteryguard.daemon.plist 2>/dev/null
+            /bin/rm -f /Library/PrivilegedHelperTools/com.batteryguard.helper 2>/dev/null
+            /opt/homebrew/bin/brew services stop batt 2>/dev/null
+            /bin/launchctl bootout system/sh.brew.batt 2>/dev/null
+            /bin/rm -f /Library/LaunchDaemons/sh.brew.batt.plist 2>/dev/null
+            " with administrator privileges
             """
             let proc = Process()
             proc.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")

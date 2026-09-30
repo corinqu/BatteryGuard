@@ -1,6 +1,6 @@
 # BatteryGuard 🔋🛡️
 
-> 专为 Apple Silicon MacBook 设计的高能效电池健康管理工具 — 自定义充电上限，延长电池使用寿命。
+> 专为 Apple Silicon MacBook 设计的高能效电池健康管理工具 — 自定义充电上限，延长电池使用寿命；适合不愿意升级macOS26且不想使用付费软件，追求极致能耗的mac用户。
 
 ## ✨ 特性亮点
 

@@ -2,8 +2,8 @@
 
 <p align="center">
   <b>A lightweight, ultra-efficient battery health & charge management utility for Apple Silicon MacBooks.</b><br>
-  <i>Perfect for users who demand peak energy efficiency without paid subscriptions or bloated commercial software.</i><br>
-  专为 Apple Silicon MacBook 设计的高能效电池健康管理工具 — 自定义充电上限，延长电池寿命；适合不想使用付费软件、追求极致能效与轻量体验的 Mac 用户。
+  <i>Ideal for users who don't want to upgrade to macOS 26, don't want to pay for commercial bloatware, and demand peak energy efficiency.</i><br>
+  专为 Apple Silicon MacBook 设计的高能效电池健康管理工具 — 自定义充电上限，延长电池使用寿命；<b>适合不愿意升级 macOS 26 且不想使用付费软件、追求极致能效与轻量体验的 Mac 用户。</b>
 </p>
 
 <p align="center">

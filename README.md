@@ -1,8 +1,88 @@
 # BatteryGuard 🔋🛡️
 
-> 专为 Apple Silicon MacBook 设计的高能效电池健康管理工具 — 自定义充电上限，延长电池使用寿命；适合不愿意升级macOS26且不想使用付费软件，追求极致能耗的mac用户。
+<p align="center">
+  <b>A lightweight, ultra-efficient battery health & charge management utility for Apple Silicon MacBooks.</b><br>
+  <i>Perfect for users who demand peak energy efficiency without paid subscriptions or bloated commercial software.</i><br>
+  专为 Apple Silicon MacBook 设计的高能效电池健康管理工具 — 自定义充电上限，延长电池寿命；适合不想使用付费软件、追求极致能效与轻量体验的 Mac 用户。
+</p>
 
-## ✨ 特性亮点
+<p align="center">
+  <a href="#english">English</a> • <a href="#中文说明">中文说明</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-macOS%2013.0+-blue?style=flat-square" alt="Platform">
+  <img src="https://img.shields.io/badge/Architecture-Apple%20Silicon%20(M1%2FM2%2FM3%2FM4)-teal?style=flat-square" alt="Architecture">
+  <img src="https://img.shields.io/badge/Dependencies-Zero%20(Standalone)-brightgreen?style=flat-square" alt="Dependencies">
+  <img src="https://img.shields.io/badge/License-MIT-orange?style=flat-square" alt="License">
+</p>
+
+---
+
+<span id="english"></span>
+
+## English
+
+### ✨ Key Features
+
+- 🚀 **Zero Dependencies & Out-of-the-Box**: **No Homebrew or terminal commands needed**. The background privileged helper is completely embedded. Simply download, drag, and launch.
+- 🔋 **Custom Charge Limit**: Freely set charge limits between 60% and 100% (break free from macOS's rigid 80% ceiling).
+- ⚡ **Hardware-Level Auto Stop**: Stops charging automatically when the target percentage is reached, even while connected to MagSafe / USB-C power adapters.
+- ⏬ **Active Natural Discharge**: If battery level exceeds your target, discharge down to the target percentage without physically unplugging the power adapter.
+- 🎨 **1:1 Native macOS 15 Battery Icon**: Pixel-perfect vector icon matching macOS Sequoia's menu bar with smooth proportional fill. The subtle translucent gray lightning bolt appears **ONLY** when current is actively flowing into the battery.
+- 🔢 **Customizable Menu Bar Display**: Toggle percentage numbers on/off, or switch to a minimalist **Numbers-Only** mode to save menu bar space.
+- 📢 **Smart Notifications**: Rate-limited notifications (5-min interval guard) for limit reached and low battery warnings.
+- 💚 **Deep Hardware Telemetry**: Read accurate cycle count and maximum capacity health percentage directly from Apple's `AppleSmartBattery` registers.
+- 🗑️ **Foolproof One-Click Uninstall**: Menu bar uninstaller completely restores macOS factory charging defaults (100% limit, normal AC power), deregisters daemons, cleans files with **zero remnants**.
+- 🪶 **Extreme Energy Efficiency**: Pure native Swift & AppKit, event-driven IOKit runloop wakeups. **0.0% idle CPU, ~3.5MB RAM footprint**.
+
+---
+
+### 📦 Installation
+
+#### Method 1: Download DMG (Recommended)
+
+1. Download the latest **`BatteryGuard-1.1.0.dmg`** from [Releases](../../releases).
+2. Open the DMG file and drag **BatteryGuard** into your **Applications** folder.
+3. Open BatteryGuard from Launchpad or Applications. On first launch, enter your Mac administrator password once to authorize the background helper service.
+4. The battery icon will appear on your menu bar. Ready to use!
+
+#### Method 2: Build from Source
+
+```bash
+# Clone repository
+git clone https://github.com/corinqu/BatteryGuard.git
+cd BatteryGuard
+
+# Build and package DMG
+chmod +x scripts/build-dmg.sh
+./scripts/build-dmg.sh
+```
+
+---
+
+### 🗑️ Uninstallation & Settings Restoration
+
+BatteryGuard ensures a clean and complete uninstallation that leaves **zero trace** and automatically restores macOS default power management:
+
+- **Method 1 (Recommended)**: Click the BatteryGuard menu bar icon → select **`🗑️ 卸载 BatteryGuard...` (Uninstall BatteryGuard)**. Confirm the prompts. The app automatically resets the SMC charge limit to 100%, enables power adapter passthrough, removes LaunchAgents, removes the privileged helper, and exits cleanly.
+- **Method 2**: Double-click **`卸载 BatteryGuard.command`** in the DMG package or run `./scripts/uninstall.sh` in the terminal.
+
+---
+
+### 🔒 Safety & Compatibility
+
+- **SIP Enabled**: Works completely with System Integrity Protection enabled.
+- **Zero Kernel Extensions**: No third-party kexts, no modifications to the read-only system volume.
+- **Fully Reversible**: Uses official SMC power management commands. Fully reset upon uninstallation, with **zero effect on hardware warranty**.
+
+---
+
+<span id="中文说明"></span>
+
+## 中文说明
+
+### ✨ 特性亮点
 
 - 🚀 **开箱即用，零依赖**：**彻底脱离对 Homebrew 或任何终端命令的依赖**，底层充电服务组件已完全内置，真正做到普通用户双击即用。
 - 🔋 **自定义充电上限**：自由设定 60% ~ 100% 充电阈值，告别 macOS 固定的 80% 限制。
@@ -17,20 +97,20 @@
 
 ---
 
-## 📦 安装使用
+### 📦 安装使用
 
-### 方式一：下载 DMG 安装包（推荐，开箱即用）
+#### 方式一：下载 DMG 安装包（推荐，开箱即用）
 
 1. 从 [Releases](../../releases) 下载最新的 `BatteryGuard-1.1.0.dmg`。
 2. 双击打开 DMG，将 **BatteryGuard** 拖入 **Applications**（应用程序）文件夹。
 3. 从启动台打开 BatteryGuard，首次使用会弹出系统原生密码框，输入一次 Mac 登录密码授权后台服务即可。
 4. 菜单栏右上角将出现电池图标，点击即可进行管理。无需任何终端或环境安装！
 
-### 方式二：源码构建
+#### 方式二：源码构建
 
 ```bash
 # 克隆仓库
-git clone https://github.com/YOUR_USERNAME/BatteryGuard.git
+git clone https://github.com/corinqu/BatteryGuard.git
 cd BatteryGuard
 
 # 编译并打包为 DMG
@@ -40,22 +120,16 @@ chmod +x scripts/build-dmg.sh
 
 ---
 
-## 🗑️ 傻瓜化卸载指南
+### 🗑️ 傻瓜化卸载指南
 
 为了做到最纯净无残留的用户体验，BatteryGuard 提供了两种极简卸载方式，均会在卸载时**自动恢复所有电源管理设置为 macOS 原始状态**：
 
-### 方式一：在 App 菜单栏内一键卸载（最方便）
-1. 点击菜单栏上的 BatteryGuard 电池图标。
-2. 点击 **「🗑️ 卸载 BatteryGuard...」**。
-3. 按照弹出窗口确认，并自主选择是否保留底层 `batt` 组件。
-4. 程序将自动恢复充电上限为 100%、移除开机自启、删除配置并退出。
-
-### 方式二：使用 DMG 或仓库中的卸载脚本
-打开 DMG 或源码仓库，双击运行 **`卸载 BatteryGuard.command`**（或在终端运行 `./scripts/uninstall.sh`），根据提示一键完成清理与还原。
+- **方式一：在 App 菜单栏内一键卸载（最方便）**：点击菜单栏上的 BatteryGuard 电池图标 → 选择 **「🗑️ 卸载 BatteryGuard...」**。程序将自动恢复充电上限为 100%、恢复适配器供电、移除开机自启、注销后台服务并清理自身。
+- **方式二：使用 DMG 或仓库中的卸载脚本**：打开 DMG 或源码仓库，双击运行 **`卸载 BatteryGuard.command`**（或在终端运行 `./scripts/uninstall.sh`），根据提示一键完成清理与还原。
 
 ---
 
-## 🔒 安全性说明
+### 🔒 安全性说明
 
 - **不关闭 SIP**（系统完整性保护开启下正常运行）。
 - **不修改系统只读镜像**，不加载任何第三方内核扩展（kext）。
@@ -63,7 +137,8 @@ chmod +x scripts/build-dmg.sh
 
 ---
 
-## 📄 开源许可
+## 📄 License / 开源许可
 
+This project is licensed under the [MIT License](LICENSE).
 本项目基于 [MIT 许可协议](LICENSE) 开源。
-底层充电管理使用了优秀的开源组件 [batt](https://github.com/charlie0129/batt)。
+Special thanks to the [batt](https://github.com/charlie0129/batt) project for open-source Apple Silicon SMC control inspiration.

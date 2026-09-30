@@ -106,22 +106,25 @@ ln -s /Applications "$DMG_TEMP/Applications"
 cp "$PROJECT_DIR/scripts/uninstall.sh" "$DMG_TEMP/卸载 BatteryGuard.command"
 chmod +x "$DMG_TEMP/卸载 BatteryGuard.command"
 
-# 4. Readme instructions
-cat > "$DMG_TEMP/使用说明.txt" << 'README'
-BatteryGuard 安装与卸载说明 (v1.1.0)
-==================================
+# 4. Bilingual Readme instructions
+cat > "$DMG_TEMP/Instructions & 说明.txt" << 'README'
+BatteryGuard (v1.1.0)
+=====================
 
-【特性：开箱即用，零依赖】
-本版本已内置底层充电控制核心，无需预先安装 Homebrew 或任何第三方依赖！
+【English】
+1. Drag BatteryGuard to the Applications folder.
+2. Launch BatteryGuard from Applications.
+3. On first launch, enter your Mac administrator password once to authorize the background service.
+4. The battery icon will appear on your menu bar!
 
-【安装方法】
+* Uninstall: Click the menu bar icon -> "🗑️ 卸载 BatteryGuard..." to cleanly restore all default settings. Or double-click "卸载 BatteryGuard.command".
+
+【中文说明】
 1. 将左侧 BatteryGuard 拖拽到右侧 Applications 文件夹。
 2. 从启动台或「应用程序」中启动 BatteryGuard。
 3. 首次启动根据提示输入一次 Mac 密码授权后台服务即可，菜单栏右上角将出现电池图标。
 
-【卸载方法（两种方式任选）】
-• 方式一（推荐）：直接点击菜单栏电池图标，选择「🗑️ 卸载 BatteryGuard...」，按提示操作即可自动恢复全部默认设置并彻底卸载。
-• 方式二：双击本 DMG 中的「卸载 BatteryGuard.command」脚本，一键清理并恢复所有状态。
+* 卸载：直接点击菜单栏图标选择「🗑️ 卸载 BatteryGuard...」自动恢复系统默认充电设置；或双击本 DMG 中的「卸载 BatteryGuard.command」。
 README
 
 # ─── Package into DMG ───

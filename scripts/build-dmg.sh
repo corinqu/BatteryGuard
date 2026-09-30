@@ -39,11 +39,14 @@ cp "$BINARY" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 # Copy bundled helper binary (Zero Homebrew dependency)
 BATT_SRC="$PROJECT_DIR/Assets/bin/batt"
 if [ -f "$BATT_SRC" ]; then
-    echo "   📦 嵌入内置充电守护核心组件..."
+    echo "   📦 嵌入内置充电守护核心组件及开源许可..."
     cp "$BATT_SRC" "$APP_BUNDLE/Contents/Resources/batt"
     cp "$BATT_SRC" "$APP_BUNDLE/Contents/Helpers/batt"
     chmod 755 "$APP_BUNDLE/Contents/Resources/batt"
     chmod 755 "$APP_BUNDLE/Contents/Helpers/batt"
+    if [ -f "$PROJECT_DIR/Assets/bin/LICENSE_batt.txt" ]; then
+        cp "$PROJECT_DIR/Assets/bin/LICENSE_batt.txt" "$APP_BUNDLE/Contents/Resources/LICENSE_batt.txt"
+    fi
 else
     echo "   ⚠️ 未找到 Assets/bin/batt，跳过内置"
 fi
@@ -106,7 +109,13 @@ ln -s /Applications "$DMG_TEMP/Applications"
 cp "$PROJECT_DIR/scripts/uninstall.sh" "$DMG_TEMP/卸载 BatteryGuard.command"
 chmod +x "$DMG_TEMP/卸载 BatteryGuard.command"
 
-# 4. Bilingual Readme instructions
+# 4. Licenses
+cp "$PROJECT_DIR/LICENSE" "$DMG_TEMP/LICENSE.txt"
+if [ -f "$PROJECT_DIR/Assets/bin/LICENSE_batt.txt" ]; then
+    cp "$PROJECT_DIR/Assets/bin/LICENSE_batt.txt" "$DMG_TEMP/LICENSE_batt.txt"
+fi
+
+# 5. Bilingual Readme instructions
 cat > "$DMG_TEMP/Instructions & 说明.txt" << 'README'
 BatteryGuard (v1.1.0)
 =====================
@@ -118,6 +127,7 @@ BatteryGuard (v1.1.0)
 4. The battery icon will appear on your menu bar!
 
 * Uninstall: Click the menu bar icon -> "🗑️ 卸载 BatteryGuard..." to cleanly restore all default settings. Or double-click "卸载 BatteryGuard.command".
+* Open Source: BatteryGuard is MIT-licensed. Built-in daemon batt is licensed under GPL-2.0 by charlie0129 (see LICENSE_batt.txt).
 
 【中文说明】
 1. 将左侧 BatteryGuard 拖拽到右侧 Applications 文件夹。
@@ -125,6 +135,7 @@ BatteryGuard (v1.1.0)
 3. 首次启动根据提示输入一次 Mac 密码授权后台服务即可，菜单栏右上角将出现电池图标。
 
 * 卸载：直接点击菜单栏图标选择「🗑️ 卸载 BatteryGuard...」自动恢复系统默认充电设置；或双击本 DMG 中的「卸载 BatteryGuard.command」。
+* 开源合规：BatteryGuard 基于 MIT 协议开源；内置底层组件 batt 基于 GPL-2.0 协议开源（作者 charlie0129），详见 DMG 内 LICENSE.txt 及 LICENSE_batt.txt。
 README
 
 # ─── Package into DMG ───

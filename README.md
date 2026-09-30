@@ -137,8 +137,25 @@ chmod +x scripts/build-dmg.sh
 
 ---
 
-## 📄 License / 开源许可
+## 📄 License & Acknowledgements / 开源许可与致谢
 
-This project is licensed under the [MIT License](LICENSE).
-本项目基于 [MIT 许可协议](LICENSE) 开源。
-Special thanks to the [batt](https://github.com/charlie0129/batt) project for open-source Apple Silicon SMC control inspiration.
+### 📜 Project License / 本项目开源协议
+- **BatteryGuard**: Licensed under the [MIT License](LICENSE).
+- 本项目主体源码基于 [MIT 许可协议](LICENSE) 完全开源。
+
+### 🤝 Third-Party Components & Credits / 第三方组件与致谢
+- **[batt](https://github.com/charlie0129/batt)** (by [@charlie0129](https://github.com/charlie0129)):
+  - BatteryGuard embeds and communicates with the `batt` daemon for low-level Apple Silicon SMC power management.
+  - `batt` is distributed under the terms of the **GNU General Public License v2.0 (GPL-2.0)**.
+  - Full license text: [Assets/bin/LICENSE_batt.txt](Assets/bin/LICENSE_batt.txt)
+  - Upstream repository: [https://github.com/charlie0129/batt](https://github.com/charlie0129/batt)
+  - *BatteryGuard 内置并调用了 charlie0129 开发的开源项目 `batt` 作为底层 SMC 充电管理守护进程。`batt` 遵循 GNU General Public License v2.0 (GPL-2.0) 开源协议，完整协议文件位于 [Assets/bin/LICENSE_batt.txt](Assets/bin/LICENSE_batt.txt)。衷心感谢原作者为 macOS 开源生态做出的杰出贡献！*
+
+---
+
+## ⚖️ Disclaimer / 免责与商标声明
+
+- **Trademarks**: Apple, Mac, MacBook, MacBook Air, Apple Silicon, and macOS are trademarks of Apple Inc., registered in the U.S. and other countries. BatteryGuard is an independent open-source project and is not affiliated with, endorsed by, or sponsored by Apple Inc.
+  - *商标声明：Apple、Mac、MacBook、MacBook Air、Apple Silicon 及 macOS 均为 Apple Inc. 在美国及其他国家/地区的注册商标。BatteryGuard 为独立第三方开源工具，与 Apple 公司无任何隶属、合作或赞助关系。*
+- **Warranty Disclaimer**: This software is provided "as is", without warranty of any kind, express or implied. BatteryGuard interacts with battery and power management hardware via official Apple SMC interfaces. While it has been thoroughly tested, users assume all risks associated with battery threshold customization.
+  - *责任限制：本软件按“现状”提供，不包含任何明示或暗示的保证。BatteryGuard 通过 macOS 官方 SMC 接口实现充放电管理，虽已通过完备的硬件安全防呆测试，但用户仍需了解电源管理的基本原理。*
